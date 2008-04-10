@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+$KOCDE = "UTF8"
+
+begin
+  require "weatherhacks"
+rescue LoadError
+  require "rubygems"
+  require "weatherhacks"
+end
+
+require "optparse"
+
+OptionParser.new do |opt|
+  opt.on("--list") do
+    $mode = :list
+  end
+  opt.parse!
+end
+
+def temperature(forecast)
+  line = []
+  if forecast.celsius.min
+    line << "最低気温" + forecast.celsius.min.to_s + "度"
+  end
+  if forecast.celsius.max
+    line << "最高気温" + forecast.celsius.max.to_s + "度"
+  end
+  "(" + line.join(", ") + ")"
+end
+
+def show_forecast
+  today = WeatherHacks::LWWS.request($city.id, :today)
+  tomorrow = WeatherHacks::LWWS.request($city.id, :tomorrow)
+  dayaftertomorrow = WeatherHacks::LWWS.request($city.id, :dayaftertomorrow)
+  puts <<LOCATION
+#{today.location.area}地方/#{today.location.pref}/#{today.location.city}
+今日: #{today.telop}#{temperature(today)}
+明日: #{tomorrow.telop}#{temperature(tomorrow)}
+明後日: #{dayaftertomorrow.telop}#{temperature(dayaftertomorrow)}
+LOCATION
+end
+
+case $mode
+when :list
+  WeatherHacks::ForecastMap::AREAS.each do |area|
+    puts "[#{area.name}]"
+    area.prefs.each do |pref|
+      puts "#{pref.name}: " + pref.cities.map{|city| city.name}.join(", ")
+    end
+  end
+else
+  if ARGV[0] and WeatherHacks::ForecastMap::CITY.has_key?(ARGV[0])
+    $city = WeatherHacks::ForecastMap::CITY[ARGV[0]]
+  else
+    puts "Unknown city name: " + ARGV[0]
+    exit 0
+  end
+  show_forecast
+end
