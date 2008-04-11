@@ -1,4 +1,13 @@
 module WeatherHacks
+  module Version #:nodoc:
+    MAJOR = 0
+    MINOR = 2
+    TINY  = 0
+
+    STRING = [MAJOR, MINOR, TINY].join('.')
+  end
+  VERSION = Version::STRING
+
   module ForecastMap
     class Area
       attr_reader :name, :rss, :prefs
@@ -55,4 +64,3 @@ end
 
 require "weatherhacks/lwws"
 require "weatherhacks/forecastmap"
-require "weatherhacks/version"
