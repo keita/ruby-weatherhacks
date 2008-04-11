@@ -121,20 +121,33 @@ module WeatherHacks::LWWS
     end
   end
 
-  # Returns a Forecast object.
-  # city_id:: city id
-  # day:: :today, :tomorrow or :dayaftertomorrow
-  def self.request(city_id, day = :today)
-    unless day == :today or day == :tomorrow or day == :dayaftertomorrow
-      raise ArgumentError, day
+  class << self
+
+    # Returns a Forecast object.
+    # city_id:: city id
+    # day:: :today, :tomorrow or :dayaftertomorrow
+    def request(city, day = :all)
+      city_id = if city.kind_of?(String)
+                  WeatherHacks::ForecastMap::CITY[city].id
+                else city end
+      unless day.to_s =~ /today|tomorrow|dayaftertomorrow|all/
+        raise ArgumentError, day
+      end
+      if day == :all
+        return [ request(city, :today),
+                 request(city, :tomorrow),
+                 request(city, :dayaftertomorrow) ]
+      end
+      req = Net::HTTP::Get.new(path(city_id, day.to_s))
+      http = Net::HTTP.new(URL.host)
+      case res = http.request(req)
+      when Net::HTTPSuccess
+        Forecast.new(REXML::Document.new(res.body))
+      else
+        raise Error.new(res)
+      end
     end
-    req = Net::HTTP::Get.new(path(city_id, day.to_s))
-    http = Net::HTTP.new(URL.host)
-    case res = http.request(req)
-    when Net::HTTPSuccess
-      Forecast.new(REXML::Document.new(res.body))
-    else
-      raise Error.new(res)
-    end
+
+    alias [] request
   end
 end
