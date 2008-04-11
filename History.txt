@@ -1,9 +1,18 @@
+== 0.2.0 2008-04-11
+
+* Keita Yamaguchi
+  * GitHub: http://github.com/keita/ruby-weatherhacks/tree/master
+  * Reduced files included in the gem package
+  * New: WeatherHacks.lwws and WeatherHacks::LWWS[] are alias of WeatherHacks::LWWS.request
+  * WeatherHacks::LWWS.request can handle city name(e.g. request("松江"))
+  * WeatherHacks::LWWS.request(city, :all) returns 3 days forecasts.
+
 == 0.1.1 2007-12-12
 
-* Keita Yamaguchi:
-  * fix bin/lwws
+* Keita Yamaguchi
+  * Fixed bin/lwws
 
 == 0.1.0 2007-12-12
 
-* Keita Yamaguchi:
+* Keita Yamaguchi
   * Initial release
