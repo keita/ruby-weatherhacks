@@ -64,3 +64,11 @@ end
 
 require "weatherhacks/lwws"
 require "weatherhacks/forecastmap"
+
+module WeatherHacks
+  module_function
+
+  def lwws(city, day = :all)
+    LWWS.request(city, day)
+  end
+end
