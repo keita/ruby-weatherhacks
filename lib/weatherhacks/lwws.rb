@@ -77,7 +77,7 @@ module WeatherHacks::LWWS
       max = elt.elements["max/celsius"].text
       @max = max.to_i if max
       min = elt.elements["min/celsius"].text
-      @max = min.to_i if min
+      @min = min.to_i if min
     end
   end
 
@@ -86,7 +86,7 @@ module WeatherHacks::LWWS
       max = elt.elements["max/fahrenheit"].text
       @max = max.to_f if max
       min = elt.elements["min/fahrenheit"].text
-      @max = min.to_f if min
+      @min = min.to_f if min
     end
   end
 
